@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Face Recognition Attendance</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;margin:20px}nav a{margin-right:10px}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #ddd;padding:8px}</style>
+  </head>
+  <body>
+  <style>
+/* ========== GLOBAL RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ========== BODY ========== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(circle at top, #111 0%, #000 60%);
+  color: #eaeaea;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* ========== NAVBAR ========== */
+nav {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 14px 20px;
+  background: rgba(20, 20, 20, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+nav a {
+  color: #cfcfcf;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  background: #00ffc6;
+  color: #000;
+  box-shadow: 0 0 12px rgba(0, 255, 198, 0.7);
+}
+
+/* ========== HEADINGS ========== */
+h1 {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+h2 {
+  margin-top: 36px;
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+  color: #00ffc6;
+}
+
+/* ========== VIDEO FEED ========== */
+#videoFeed {
+  width: 100%;
+  max-width: 680px;
+  border-radius: 14px;
+  border: 1px solid #333;
+  box-shadow: 0 0 25px rgba(0, 255, 198, 0.25);
+  margin-top: 12px;
+}
+
+/* ========== TABLE ========== */
+table {
+  width: 100%;
+  margin-top: 14px;
+  border-collapse: collapse;
+  background: rgba(18, 18, 18, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+thead {
+  background: linear-gradient(90deg, #111, #1a1a1a);
+}
+
+th {
+  padding: 14px;
+  text-align: left;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #00ffc6;
+  border-bottom: 1px solid #333;
+}
+
+td {
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #222;
+  color: #e0e0e0;
+}
+
+/* ========== ROW EFFECTS ========== */
+tbody tr {
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+tbody tr:hover {
+  background: rgba(0, 255, 198, 0.08);
+  transform: scale(1.01);
+}
+
+/* ========== ATTENDANCE STATUS ========== */
+td:last-child {
+  font-weight: bold;
+}
+
+td:last-child:contains("Present") {
+  color: #00ff8c;
+}
+
+td:last-child:contains("Absent") {
+  color: #ff4d4d;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  nav {
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  table {
+    font-size: 0.85rem;
+  }
+}
+</style>
+
+    <nav>
+      <a href="/">Home</a>
+      <a href="/register">Register Student</a>
+      <a href="/login">Login</a>
+    </nav>
+
+    <h1>Live Camera Feed</h1>
+    <div>
+      <img id="videoFeed" src="/video_feed" style="max-width:640px;border:1px solid #ccc"/>
+    </div>
+
+    <h2>Students</h2>
+    <table id="studentsTable">
+      <thead><tr><th>ID</th><th>Name</th><th>Roll</th><th>Department</th></tr><tr><th>Attendance</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      async function loadStudents(){
+        const res = await fetch('/students');
+        const data = await res.json();
+        console.log(data)
+        const tbody = document.querySelector('#studentsTable tbody');
+        tbody.innerHTML = '';
+        data.forEach(s => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${s.id}</td><td>${s.name}</td><td>${s.roll}</td><td>${s.department}</td><td>${s.present}`;
+          tbody.appendChild(tr);
+        });
+      }
+      loadStudents();
+      setInterval(loadStudents, 5000);
+    </script>
+  </body>
+</html>
