@@ -26,6 +26,14 @@ class FaceRecognition:
         self.known_encodings.append(encoding)
         self.known_names.append((student_id, name))
 
+    def remove_encoding(self, student_id):
+        """Remove a student's encoding from memory."""
+        for i, (sid, name) in enumerate(self.known_names):
+            if sid == student_id:
+                del self.known_encodings[i]
+                del self.known_names[i]
+                break
+
     def recognize_face(self, frame):
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         faces = face_recognition.face_locations(rgb_frame)

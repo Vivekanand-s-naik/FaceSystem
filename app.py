@@ -101,6 +101,27 @@ def attendance():
     print(type(records))
     return jsonify(records)
 
+@app.route('/clear_session', methods=['POST'])
+def clear_session():
+    """Clear the in-memory attendance session (reset present dictionary)"""
+    global present
+    present = dict()
+    return jsonify({'status': 'success', 'message': 'Session cleared successfully'})
+
+@app.route('/delete_student/<int:student_id>', methods=['DELETE'])
+def delete_student(student_id):
+    """Delete a student and their attendance records"""
+    try:
+        db.delete_student(student_id)
+        # Remove from in-memory present dict if exists
+        if student_id in present:
+            del present[student_id]
+        # Remove encoding from face_recog
+        face_recog.remove_encoding(student_id)
+        return jsonify({'status': 'success', 'message': 'Student deleted successfully'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

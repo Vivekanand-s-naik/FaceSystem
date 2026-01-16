@@ -57,3 +57,13 @@ class Database:
                 c.execute("INSERT INTO attendance (student_id, date, time, status) VALUES (?, ?, ?, ?)",
                           (student_id, today, now, status))
                 conn.commit()
+
+    def delete_student(self, student_id):
+        """Delete a student and their attendance records"""
+        with self.connect() as conn:
+            c = conn.cursor()
+            # Delete attendance records first (foreign key constraint)
+            c.execute("DELETE FROM attendance WHERE student_id=?", (student_id,))
+            # Delete the student
+            c.execute("DELETE FROM students WHERE id=?", (student_id,))
+            conn.commit()
